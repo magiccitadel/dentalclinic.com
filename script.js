@@ -1,3 +1,103 @@
+   
+      // customer feedback 
+      document.addEventListener('DOMContentLoaded', () => {
+        const slider = document.querySelector('.slider');
+        const sliderCards = document.querySelectorAll('.customer-feedback-card');
+        const prevBtn = document.querySelector('.prev');
+        const nextBtn = document.querySelector('.next');
+      
+        let isDragging = false;
+        let startPos = 0;
+        let currentTranslate = 0;
+        let prevTranslate = 0;
+        let currentIndex = 0;
+        const transitionDuration = 0.3; // Transition duration in seconds
+      
+        // Number of visible cards
+        const visibleCards = () => {
+          if (window.innerWidth >= 1024) return 3; // 3 cards on desktop
+          if (window.innerWidth >= 768) return 2; // 2 cards on tablet
+          return 1; // 1 card on mobile
+        };
+      
+        // Apply transition for smooth sliding
+        const applyTransition = () => {
+          slider.style.transition = `transform ${transitionDuration}s ease`;
+        };
+      
+        // Remove transition for dragging
+        const removeTransition = () => {
+          slider.style.transition = 'none';
+        };
+      
+        // Move slider to correct position
+        const moveSlider = (index) => {
+          applyTransition();
+          currentTranslate = -(index * 100) / visibleCards();
+          slider.style.transform = `translateX(${currentTranslate}%)`;
+          prevTranslate = currentTranslate;
+        };
+      
+        // Start dragging
+        const startDragging = (e) => {
+          isDragging = true;
+          startPos = e.type.includes('touch') ? e.touches[0].clientX : e.clientX;
+          removeTransition(); // Remove transition to make dragging instant
+          slider.classList.add('grabbing');
+        };
+      
+        // Stop dragging
+        const stopDragging = () => {
+          isDragging = false;
+          slider.classList.remove('grabbing');
+      
+          const movedBy = prevTranslate - currentTranslate;
+          if (movedBy < -50 && currentIndex > 0) {
+            currentIndex--;
+          } else if (movedBy > 50 && currentIndex < sliderCards.length - visibleCards()) {
+            currentIndex++;
+          }
+      
+          moveSlider(currentIndex);
+        };
+      
+        // During drag
+        const duringDragging = (e) => {
+          if (isDragging) {
+            const currentPosition = e.type.includes('touch') ? e.touches[0].clientX : e.clientX;
+            currentTranslate = prevTranslate + ((currentPosition - startPos) / window.innerWidth) * 100;
+            slider.style.transform = `translateX(${currentTranslate}%)`;
+          }
+        };
+      
+        // Previous button
+        prevBtn.addEventListener('click', () => {
+          if (currentIndex > 0) {
+            currentIndex--;
+            moveSlider(currentIndex);
+          }
+        });
+      
+        // Next button
+        nextBtn.addEventListener('click', () => {
+          if (currentIndex < sliderCards.length - visibleCards()) {
+            currentIndex++;
+            moveSlider(currentIndex);
+          }
+        });
+      
+        // Event listeners for drag functionality
+        slider.addEventListener('mousedown', startDragging);
+        slider.addEventListener('touchstart', startDragging);
+        slider.addEventListener('mouseup', stopDragging);
+        slider.addEventListener('touchend', stopDragging);
+        slider.addEventListener('mouseleave', stopDragging);
+        slider.addEventListener('mousemove', duringDragging);
+        slider.addEventListener('touchmove', duringDragging);
+      
+        // Adjust slider on window resize
+        window.addEventListener('resize', () => moveSlider(currentIndex));
+          });
    // intro background slider
    document.addEventListener("DOMContentLoaded", function() {
     const intro = document.getElementById("intro");
@@ -191,114 +291,4 @@
         stagger: 0.3
     });
   }
-    
    
-   
-     
-      // customer feedback 
-      document.addEventListener('DOMContentLoaded', () => {
-    const slider = document.querySelector('.slider');
-    const sliderCards = document.querySelectorAll('.customer-feedback-card');
-    const prevBtn = document.querySelector('.prev');
-    const nextBtn = document.querySelector('.next');
-  
-    let isDragging = false;
-    let startPos = 0;
-    let currentTranslate = 0;
-    let prevTranslate = 0;
-    let currentIndex = 0;
-    const transitionDuration = 0.3; // Transition duration in seconds
-  
-    // Number of visible cards
-    const visibleCards = () => {
-      if (window.innerWidth >= 1024) return 3; // 3 cards on desktop
-      if (window.innerWidth >= 768) return 2; // 2 cards on tablet
-      return 1; // 1 card on mobile
-    };
-  
-    // Apply transition for smooth sliding
-    const applyTransition = () => {
-      slider.style.transition = `transform ${transitionDuration}s ease`;
-    };
-  
-    // Remove transition for dragging
-    const removeTransition = () => {
-      slider.style.transition = 'none';
-    };
-  
-    // Move slider to correct position
-    const moveSlider = (index) => {
-      applyTransition();
-      currentTranslate = -(index * 100) / visibleCards();
-      slider.style.transform = `translateX(${currentTranslate}%)`;
-      prevTranslate = currentTranslate;
-    };
-  
-    // Start dragging
-    const startDragging = (e) => {
-      isDragging = true;
-      startPos = e.type.includes('touch') ? e.touches[0].clientX : e.clientX;
-      removeTransition(); // Remove transition to make dragging instant
-      slider.classList.add('grabbing');
-    };
-  
-    // Stop dragging
-    const stopDragging = () => {
-      isDragging = false;
-      slider.classList.remove('grabbing');
-  
-      const movedBy = prevTranslate - currentTranslate;
-      if (movedBy < -50 && currentIndex > 0) {
-        currentIndex--;
-      } else if (movedBy > 50 && currentIndex < sliderCards.length - visibleCards()) {
-        currentIndex++;
-      }
-  
-      moveSlider(currentIndex);
-    };
-  
-    // During drag
-    const duringDragging = (e) => {
-      if (isDragging) {
-        const currentPosition = e.type.includes('touch') ? e.touches[0].clientX : e.clientX;
-        currentTranslate = prevTranslate + ((currentPosition - startPos) / window.innerWidth) * 100;
-        slider.style.transform = `translateX(${currentTranslate}%)`;
-      }
-    };
-  
-    // Previous button
-    prevBtn.addEventListener('click', () => {
-      if (currentIndex > 0) {
-        currentIndex--;
-        moveSlider(currentIndex);
-      }
-    });
-  
-    // Next button
-    nextBtn.addEventListener('click', () => {
-      if (currentIndex < sliderCards.length - visibleCards()) {
-        currentIndex++;
-        moveSlider(currentIndex);
-      }
-    });
-  
-    // Event listeners for drag functionality
-    slider.addEventListener('mousedown', startDragging);
-    slider.addEventListener('touchstart', startDragging);
-    slider.addEventListener('mouseup', stopDragging);
-    slider.addEventListener('touchend', stopDragging);
-    slider.addEventListener('mouseleave', stopDragging);
-    slider.addEventListener('mousemove', duringDragging);
-    slider.addEventListener('touchmove', duringDragging);
-  
-    // Adjust slider on window resize
-    window.addEventListener('resize', () => moveSlider(currentIndex));
-      });
-    
-   
-   
-   
-          
-
-  
-  
